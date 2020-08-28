@@ -1,11 +1,7 @@
 const { context } = require('@actions/github');
 
-function buildSlackAttachments({ status, color, github, tag }) {
-  const { payload, eventName } = github.context;
+function buildSlackAttachments({ status, color, tag }) {
   const { owner, repo } = context.repo;
-  const event = eventName;
-
-  const sha = event === 'pull_request' ? payload.pull_request.head.sha : github.context.sha;
 
   return [
     {
@@ -23,7 +19,7 @@ function buildSlackAttachments({ status, color, github, tag }) {
         },
         {
           title: 'Status',
-          value: `<https://github.com/${owner}/${repo}/commit/${sha}/checks | ${status}>`,
+          value: `<https://github.com/${owner}/${repo}/commit/${tag}/checks | ${status}>`,
           short: true,
         },
       ],
