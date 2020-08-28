@@ -1,5 +1,5 @@
-name: 'Slack Notify Build'
-description: 'Report GitHub Actions build status on Slack'
+name: 'Slack Notify Deployment'
+description: 'Report GitHub Actions deployment status on Slack'
 branding:
   icon: message-square
   color: orange
@@ -20,6 +20,9 @@ inputs:
   message_id:
     description: 'The ID of the existing Slack message to update.'
     required: false
+  tag:
+    description: 'Tag of the Docker image being deployed.'
+    required: true
 outputs:
   message_id:
     description: 'The unique timestamp identifier of the Slack message sent'

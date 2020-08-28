@@ -1,78 +1,70 @@
-# Slack Notify Build
+# Slack Notify Deployment
 
-This action prints your GitHub Action build status to Slack. It takes an opinionated approach by showing attachments for metadata like branch, pull request, and event. This action allows [existing messages to be updated](#updating-an-existing-message) to reduce unwanted noise in your Slack channel. Heavily-inspired by [Post Slack messages](https://github.com/marketplace/actions/post-slack-message).
+This action prints your GitHub Action deployment status to Slack. It takes an opinionated approach by showing attachments for metadata like branch, pull request, and event. This action allows [existing messages to be updated](#updating-an-existing-message) to reduce unwanted noise in your Slack channel. Heavily-inspired by [Post Slack messages](https://github.com/marketplace/actions/post-slack-message).
 
 A [Slack bot token](https://api.slack.com/docs/token-types) is required to use this action, and the associated app must be granted permission to post in the channel, private group or DM you specify.
 
 ## Usage
 
 ```yaml
-uses: voxmedia/github-action-slack-notify-build@v1
+uses: Discontract/github-action-slack-notify-deployment@v1
 with:
-  channel: app-alerts
+  channel: deployments
   status: STARTED
   color: good
 env:
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 ```
 
-The Slack notification leverages attachments to group important information together and provide valuable links:
-
-<img src="docs/push.png" alt="Screenshot of the push event" width="540">
-
-When used with the `pull_request` event, a link to the originating pull request is included:
-
-<img src="docs/pr.png" alt="Screenshot of the pull_request event" width="540">
+The Slack notification leverages attachments to group important information together and provide valuable links.
 
 ### Updating an Existing Message
 
-If you need to send multiple Slack build updates and you prefer to update a single message instead of posting multiple messages, you can pass a `message_id` to future steps.
-
-<img src="docs/updating_message.gif" alt="Updating existing messages" width="540">
+If you need to send multiple Slack deployment updates and you prefer to update a single message instead of posting multiple messages, you can pass a `message_id` to future steps.
 
 Note: You must assign a step `id` to the first Slack notification step in order to reference it for future steps:
 
 ```yaml
-- name: Notify slack success
+- name: Notify slack starting
   if: success()
   id: slack # IMPORTANT: reference this step ID value in future Slack steps
   env:
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-  uses: voxmedia/github-action-slack-notify-build@v1
+  uses: Discontract/github-action-slack-notify-deployment@v1
   with:
-    channel: app-alerts
+    channel: deployments
     status: STARTING
     color: warning
 
-- name: Run tests
-  # ... your test step here
+- name: Deploy
+  # ... your deployment step here
 - name: Notify slack success
   if: success()
   env:
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-  uses: voxmedia/github-action-slack-notify-build@v1
+  uses: Discontract/github-action-slack-notify-deployment@v1
   with:
     # Updates existing message from the first step
     message_id: ${{ steps.slack.outputs.message_id }}
-    channel: app-alerts
+    channel: deployments
     status: SUCCESS
     color: good
 ```
 
 ### Reporting Success or Failure
 
-You can use the `success()` and `failure()` conditional checks within your workflow to determine which build notification to send:
+You can use the `success()` and `failure()` conditional checks within your workflow to determine which deployment notification to send:
 
 ```yaml
-- name: Run tests
-  # ... your test step here
+- name: Deploy
+# ... your deployment step here
 - name: Notify slack success
   if: success()
   env:
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-  uses: voxmedia/github-action-slack-notify-build@v1
+  uses: Discontract/github-action-slack-notify-deployment@v1
   with:
-    channel: app-alerts
+    channel: deployments
     status: SUCCESS
     color: good
 
@@ -80,9 +72,9 @@ You can use the `success()` and `failure()` conditional checks within your workf
   if: failure()
   env:
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-  uses: voxmedia/github-action-slack-notify-build@v1
+  uses: Discontract/github-action-slack-notify-deployment@v1
   with:
-    channel: app-alerts
+    channel: deployments
     status: FAILED
     color: danger
 ```
@@ -136,11 +128,12 @@ To use this GitHub Action, you'll need a [Slack bot token](https://api.slack.com
 
 In order to use your Slack App with this GitHub Action, be sure to enable the following OAuth scopes:
 
-| Scope           | Required?                                  |
-| --------------- | ------------------------------------------ |
-| `chat:write`    | Yes                                        |
-| `channels:read` | If using `channel` instead of `channel_id` |
-| `groups:read`   | If using `channel` instead of `channel_id` |
+| Scope               | Required?                                  |
+| ------------------- | ------------------------------------------ |
+| `chat:write`        | Yes                                        |
+| `chat:write.public` | Yes                                        |
+| `channels:read`     | If using `channel` instead of `channel_id` |
+| `groups:read`       | If using `channel` instead of `channel_id` |
 
 ## License
 
