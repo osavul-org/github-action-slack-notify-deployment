@@ -14,7 +14,7 @@ function buildSlackAttachments({ status, color, tag }) {
         },
         {
           title: 'Tag',
-          value: `<https://github.com/${owner}/${repo}/commit/${tag} | ${tag}`,
+          value: `<https://github.com/${owner}/${repo}/commit/${tag} | ${tag}>`,
           short: true,
         },
         {
