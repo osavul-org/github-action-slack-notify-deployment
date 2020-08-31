@@ -18,6 +18,11 @@ function buildSlackAttachments({ status, color, tag, projectName }) {
           short: true,
         },
         {
+          title: 'Initiated by',
+          value: context.actor,
+          short: true,
+        },
+        {
           title: 'Status',
           value: `<https://github.com/${owner}/${repo}/commit/${tag}/checks | ${status}>`,
           short: true,
