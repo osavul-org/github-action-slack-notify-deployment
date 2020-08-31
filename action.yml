@@ -23,6 +23,9 @@ inputs:
   tag:
     description: 'Tag of the Docker image being deployed.'
     required: true
+  project_name:
+    description: 'Override the project name.'
+    required: false
 outputs:
   message_id:
     description: 'The unique timestamp identifier of the Slack message sent'
