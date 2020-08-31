@@ -953,6 +953,7 @@ const { buildSlackAttachments, formatChannelName } = __webpack_require__(543);
     const color = core.getInput('color');
     const messageId = core.getInput('message_id');
     const tag = core.getInput('tag');
+    const projectName = core.getInput('project_name');
     const token = process.env.SLACK_BOT_TOKEN;
     const slack = new WebClient(token);
 
@@ -961,7 +962,7 @@ const { buildSlackAttachments, formatChannelName } = __webpack_require__(543);
       return;
     }
 
-    const attachments = buildSlackAttachments({ status, color, tag });
+    const attachments = buildSlackAttachments({ status, color, tag, projectName });
     const channelId = core.getInput('channel_id') || (await lookUpChannelId({ slack, channel }));
 
     if (!channelId) {
@@ -10050,7 +10051,7 @@ function hasFirstPage (link) {
 
 const { context } = __webpack_require__(469);
 
-function buildSlackAttachments({ status, color, tag }) {
+function buildSlackAttachments({ status, color, tag, projectName }) {
   const { owner, repo } = context.repo;
 
   return [
@@ -10059,8 +10060,8 @@ function buildSlackAttachments({ status, color, tag }) {
       fields: [
         {
           title: 'Project',
-          value: `<https://github.com/${owner}/${repo} | ${repo}>`,
-          short: false,
+          value: `<https://github.com/${owner}/${repo} | ${projectName || repo}>`,
+          short: true,
         },
         {
           title: 'Tag',
@@ -10068,8 +10069,13 @@ function buildSlackAttachments({ status, color, tag }) {
           short: true,
         },
         {
+          title: 'Initiated by',
+          value: context.actor,
+          short: true,
+        },
+        {
           title: 'Status',
-          value: `<https://github.com/${owner}/${repo}/commit/${tag}/checks | ${status}>`,
+          value: `<https://github.com/${owner}/${repo}/actions/runs/${process.env.GITHUB_RUN_ID} | ${status}>`,
           short: true,
         },
       ],
