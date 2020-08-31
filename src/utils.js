@@ -1,10 +1,7 @@
 const { context } = require('@actions/github');
-const { inspect } = require('util');
 
 function buildSlackAttachments({ status, color, tag, projectName }) {
   const { owner, repo } = context.repo;
-
-  console.log('context', inspect(context, { depth: null }));
 
   return [
     {
@@ -27,7 +24,7 @@ function buildSlackAttachments({ status, color, tag, projectName }) {
         },
         {
           title: 'Status',
-          value: `<https://github.com/${owner}/${repo}/commit/${tag}/checks | ${status}>`,
+          value: `<https://github.com/${owner}/${repo}/actions/runs/${process.env.GITHUB_RUN_ID} | ${status}>`,
           short: true,
         },
       ],
