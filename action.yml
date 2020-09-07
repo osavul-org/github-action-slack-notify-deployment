@@ -26,6 +26,9 @@ inputs:
   project_name:
     description: 'Override the project name.'
     required: false
+  actor:
+    description: 'Override the actor name.'
+    required: false
 outputs:
   message_id:
     description: 'The unique timestamp identifier of the Slack message sent'

@@ -946,7 +946,7 @@ const core = __webpack_require__(470);
 const { WebClient } = __webpack_require__(114);
 const { buildSlackAttachments, formatChannelName } = __webpack_require__(543);
 
-(async () => {
+async function notify() {
   try {
     const channel = core.getInput('channel');
     const status = core.getInput('status');
@@ -954,6 +954,7 @@ const { buildSlackAttachments, formatChannelName } = __webpack_require__(543);
     const messageId = core.getInput('message_id');
     const tag = core.getInput('tag');
     const projectName = core.getInput('project_name');
+    const actor = core.getInput('actor');
     const token = process.env.SLACK_BOT_TOKEN;
     const slack = new WebClient(token);
 
@@ -962,7 +963,7 @@ const { buildSlackAttachments, formatChannelName } = __webpack_require__(543);
       return;
     }
 
-    const attachments = buildSlackAttachments({ status, color, tag, projectName });
+    const attachments = buildSlackAttachments({ status, color, tag, projectName, actor });
     const channelId = core.getInput('channel_id') || (await lookUpChannelId({ slack, channel }));
 
     if (!channelId) {
@@ -987,7 +988,7 @@ const { buildSlackAttachments, formatChannelName } = __webpack_require__(543);
   } catch (error) {
     core.setFailed(error);
   }
-})();
+}
 
 async function lookUpChannelId({ slack, channel }) {
   let result;
@@ -1005,6 +1006,26 @@ async function lookUpChannelId({ slack, channel }) {
   }
 
   return result;
+}
+
+// Main
+if (!process.env['STATE_isPost']) {
+  notify({
+    status: 'STARTING',
+    color: 'warning',
+  });
+}
+// Post
+else if (success) {
+  notify({
+    status: 'SUCCESS',
+    color: 'good',
+  });
+} else {
+  notify({
+    status: 'FAILED',
+    color: 'danger',
+  });
 }
 
 
@@ -10051,7 +10072,7 @@ function hasFirstPage (link) {
 
 const { context } = __webpack_require__(469);
 
-function buildSlackAttachments({ status, color, tag, projectName }) {
+function buildSlackAttachments({ status, color, tag, projectName, actor }) {
   const { owner, repo } = context.repo;
 
   return [
@@ -10070,7 +10091,7 @@ function buildSlackAttachments({ status, color, tag, projectName }) {
         },
         {
           title: 'Initiated by',
-          value: context.actor,
+          value: actor || context.actor,
           short: true,
         },
         {
