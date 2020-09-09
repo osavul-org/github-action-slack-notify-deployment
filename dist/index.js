@@ -946,7 +946,7 @@ const core = __webpack_require__(470);
 const { WebClient } = __webpack_require__(114);
 const { buildSlackAttachments, formatChannelName } = __webpack_require__(543);
 
-async function notify() {
+(async () => {
   try {
     const channel = core.getInput('channel');
     const status = core.getInput('status');
@@ -955,6 +955,7 @@ async function notify() {
     const tag = core.getInput('tag');
     const projectName = core.getInput('project_name');
     const actor = core.getInput('actor');
+    const repoUrl = core.getInput('repo_url');
     const token = process.env.SLACK_BOT_TOKEN;
     const slack = new WebClient(token);
 
@@ -963,7 +964,7 @@ async function notify() {
       return;
     }
 
-    const attachments = buildSlackAttachments({ status, color, tag, projectName, actor });
+    const attachments = buildSlackAttachments({ status, color, tag, projectName, actor, repoUrl });
     const channelId = core.getInput('channel_id') || (await lookUpChannelId({ slack, channel }));
 
     if (!channelId) {
@@ -988,7 +989,7 @@ async function notify() {
   } catch (error) {
     core.setFailed(error);
   }
-}
+})();
 
 async function lookUpChannelId({ slack, channel }) {
   let result;
@@ -1006,26 +1007,6 @@ async function lookUpChannelId({ slack, channel }) {
   }
 
   return result;
-}
-
-// Main
-if (!process.env['STATE_isPost']) {
-  notify({
-    status: 'STARTING',
-    color: 'warning',
-  });
-}
-// Post
-else if (success) {
-  notify({
-    status: 'SUCCESS',
-    color: 'good',
-  });
-} else {
-  notify({
-    status: 'FAILED',
-    color: 'danger',
-  });
 }
 
 
@@ -10072,8 +10053,9 @@ function hasFirstPage (link) {
 
 const { context } = __webpack_require__(469);
 
-function buildSlackAttachments({ status, color, tag, projectName, actor }) {
+function buildSlackAttachments({ status, color, tag, projectName, actor, repoUrl }) {
   const { owner, repo } = context.repo;
+  repoUrl = repoUrl || `https://github.com/${owner}/${repo}`
 
   return [
     {
@@ -10081,12 +10063,12 @@ function buildSlackAttachments({ status, color, tag, projectName, actor }) {
       fields: [
         {
           title: 'Project',
-          value: `<https://github.com/${owner}/${repo} | ${projectName || repo}>`,
+          value: `${repoUrl} | ${projectName || repo}>`,
           short: true,
         },
         {
           title: 'Tag',
-          value: `<https://github.com/${owner}/${repo}/commit/${tag} | ${tag}>`,
+          value: `<${repoUrl}/commit/${tag} | ${tag}>`,
           short: true,
         },
         {

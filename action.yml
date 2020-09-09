@@ -29,6 +29,9 @@ inputs:
   actor:
     description: 'Override the actor name.'
     required: false
+  repo_url:
+    description: 'Override the repository URL.'
+    required: false
 outputs:
   message_id:
     description: 'The unique timestamp identifier of the Slack message sent'
