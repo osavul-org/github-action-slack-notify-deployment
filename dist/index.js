@@ -10055,7 +10055,7 @@ const { context } = __webpack_require__(469);
 
 function buildSlackAttachments({ status, color, tag, projectName, actor, repoUrl }) {
   const { owner, repo } = context.repo;
-  repoUrl = repoUrl || `https://github.com/${owner}/${repo}`
+  repoUrl = repoUrl || `https://github.com/${owner}/${repo}`;
 
   return [
     {
@@ -10063,7 +10063,7 @@ function buildSlackAttachments({ status, color, tag, projectName, actor, repoUrl
       fields: [
         {
           title: 'Project',
-          value: `${repoUrl} | ${projectName || repo}>`,
+          value: `<${repoUrl} | ${projectName || repo}>`,
           short: true,
         },
         {

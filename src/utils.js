@@ -10,7 +10,7 @@ function buildSlackAttachments({ status, color, tag, projectName, actor, repoUrl
       fields: [
         {
           title: 'Project',
-          value: `${repoUrl} | ${projectName || repo}>`,
+          value: `<${repoUrl} | ${projectName || repo}>`,
           short: true,
         },
         {
