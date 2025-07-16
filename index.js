@@ -8,7 +8,8 @@ const { buildSlackAttachments, formatChannelName } = require('./src/utils');
     const status = core.getInput('status');
     const color = core.getInput('color');
     const messageId = core.getInput('message_id');
-    const tag = core.getInput('tag');
+    const ref = core.getInput('ref');
+    const environment = core.getInput('environment');
     const projectName = core.getInput('project_name');
     const actor = core.getInput('actor');
     const repoUrl = core.getInput('repo_url');
@@ -20,7 +21,7 @@ const { buildSlackAttachments, formatChannelName } = require('./src/utils');
       return;
     }
 
-    const attachments = buildSlackAttachments({ status, color, tag, projectName, actor, repoUrl });
+    const attachments = buildSlackAttachments({ status, color, ref, environment, projectName, actor, repoUrl });
     const channelId = core.getInput('channel_id') || (await lookUpChannelId({ slack, channel }));
 
     if (!channelId) {
